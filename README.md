@@ -12,38 +12,6 @@
 
 本项目摒弃了传统的单轮 RAG 问答，在禁止模型微调的前提下，通过 **多步拆解规划 + 动态循环检索 + 严苛特征打分** 的纯 Prompt 与 Python 工具工程，实现了高鲁棒性的事实抽取与知识归一化。
 
----
-
-## 📂 仓库目录结构
-为了清晰展示大模型工作流的核心资产，本项目将 LangStudio 的可视化节点拆解为结构化的代码与提示词：
-
-```text
-.
-├── 📁 assets/                  # 存放工作流可视化截图
-│   ├── main_flow.png           # 全局工作流拓扑图
-│   └── iteration_loop.png      # 核心迭代搜索（ReAct）循环子图
-│
-├── 📁 deepresearchworkflow/    # 工作流元数据 (LangStudio Export)
-│   └── .export_metadata.json   # 包含原始的画布连线定义与节点参数
-│
-├── 📁 prompts/                 # 核心 Agent 提示词工程 (Prompt Engineering)
-│   ├── question_confirm.txt    # [节点] 问题确认与云平台敏感词脱敏规则
-│   ├── question_planning.txt   # [节点] 多维特征拆解与检索步骤规划
-│   ├── background_keywords.txt # [节点] 中英双语降维策略与关键词提取
-│   ├── smart_search.txt        # [节点] 智能搜索打分器与一票否决规则
-│   └── generate_report.txt     # [节点] 终态报告生成、格式阻断与静默兜底
-│
-└── 📁 tools/                   # 自定义 Python 工具节点 (Tool Coding)
-    ├── smart_search_iqs.py     # 阿里云 IQS 搜索引擎调用与防 429 退避策略
-    ├── extract_planning.py     # 基于正则的鲁棒性 JSON 解析器（带解析灾难兜底）
-    ├── collect_search_info.py  # 跨循环周期的上下文状态（Memory）管理与拼接
-    ├── get_search_target.py    # 迭代目标切片控制
-    ├── extract_ref_sites.py    # 摘要与参考源结构化提取
-    ├── generate_bg_keywords.py # 关键词生成工具逻辑
-    ├── summarize_question.py   # 问题总结流转控制
-    └── update_step_count.py    # 循环步数累加器与中止条件守护
-
-
 ## 🧠 系统架构与流转拓扑
 本系统参考了 Plan-and-Execute 模式，并结合了严格的流程控制。整体架构分为四大核心阶段，各阶段关联文件、核心逻辑清晰拆分如下：
 
