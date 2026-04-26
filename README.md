@@ -1,11 +1,14 @@
 🕵️‍♂️ DeepResearch Agent: 基于大模型的多跳推理与自动化检索工作流
+
 ![alt text](https://img.shields.io/badge/Workflow-PAI%20LangStudio-blue)
 
 ![alt text](https://img.shields.io/badge/LLM-Qwen3--Max-green)
 
 ![alt text](https://img.shields.io/badge/Python-3.10+-yellow)
+
 本项目为【寻找AI全能王：阿里云 Data+AI 全球大奖赛】的高阶 Agent 挑战赛开源项目。
 这是一个处理极度复杂、多跳约束、且包含模糊指代的真实世界研究问题（Research Question）的智能体工作流。本项目摒弃了传统的单轮 RAG 问答，在禁止模型微调的前提下，通过 “多步拆解规划 + 动态循环检索 + 严苛特征打分” 的纯 Prompt 与 Python 工具工程，实现了高鲁棒性的事实抽取与知识归一化。
+
 📂 仓库目录结构
 为了清晰展示大模型工作流的核心资产，本项目将 LangStudio 的可视化节点拆解为结构化的代码与提示词：
 code
@@ -34,6 +37,7 @@ Text
     ├── generate_bg_keywords.py # 关键词生成工具逻辑
     ├── summarize_question.py   # 问题总结流转控制
     └── update_step_count.py    # 循环步数累加器与中止条件守护
+    
 🧠 系统架构与流转拓扑
 本系统参考了 Plan-and-Execute 模式，并结合了严格的流程控制。整体架构分为四大核心阶段：
 Phase 1: 意图清洗与合规重构 (prompts/question_confirm.txt)
@@ -51,6 +55,7 @@ Phase 4: 格式阻断与静默兜底 (prompts/generate_report.txt)
 针对自动化评测的归一化要求，设置最终输出防火墙：
 零容忍格式：强制屏蔽所有“推理过程”、“语气词”及“标点符号”。
 Silent Fallback（静默兜底）：当且仅当迭代检索穷尽且证据链彻底断裂时，允许大模型调用内部预训练知识进行补救，但必须依然伪装成严格的实体输出格式，最大化提升容错率。
+
 💡 核心工程创新点
 大模型代码级容错 (Defensive Programming)
 在 tools/extract_planning.py 中，针对 LLM 偶尔不按规范输出 JSON（如夹杂 Markdown 标记、忘写括号）的痛点，编写了多层正则匹配兜底算法。即使彻底解析失败，也能自动注入预设的 fallback_steps，确保整个长链路的 Pipeline 绝对不崩溃。
